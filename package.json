@@ -1,0 +1,22 @@
+{
+    "name":         "ofs-feeds",
+    "description":  "ObjectFS storage wrapper for RSS/Atom/etc. feeds.",
+    "homepage":     "https://github.com/emilis/ofs-feeds",
+    "version":      "1.0",
+    "main":         "index.js",
+    "dependencies": {
+        "ctlr-xml": "1.0",
+        "ctlr-sync": "1.0"
+    },
+    "repositories": [{
+            "type":"git",
+            "url":"git://github.com/emilis/ofs-feeds.git"
+        }],
+    "objectfs-uris": [
+        { "scheme":"rss", "module":"ofs-feeds" },
+        { "path": "*.rss", "module":"ofs-feeds" }],
+    "maintainers":   [
+        { "name": "Emilis Dambauskas", "email": "emilis.d@gmail.com", "web": "http://emilis.github.com/" }],
+    "licenses":     [
+        { "type": "GPLv3", "url": "http://www.gnu.org/licenses/gpl.txt" }]
+}
