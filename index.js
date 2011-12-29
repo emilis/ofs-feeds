@@ -91,4 +91,15 @@ exports.iterateAll = function() {
 };
 
 
+/**
+ *
+ */
+exports.list = function(filter, options) {
+
+    var l = [];
+    for each (var record in this.iterate(filter, options)) {
+        l.push(record);
+    }
+    return l;
+};
 
