@@ -24,11 +24,14 @@ for each (var item in feeds.iterate()) {
 #### ofs-feeds
 
 <table><tbody>
+<tr><td align="right">void</td>
+    <td><b>connect</b> (URI)</td>
+    <td>Configure the module instance to use a specific feed file.</td></tr>
 <tr><td align="right">Object</td>
-    <td><b>read</b> (URI, ID)</td>
+    <td><b>read</b> (ID)</td>
     <td>Read one record from the specified storage.</td></tr>
 <tr><td align="right"><a href="https://developer.mozilla.org/en/JavaScript/Guide/Iterators_and_Generators">Iterator</a></td>
-    <td nowrap="nowrap"><b>iterate</b> (URI, filter, options)</td>
+    <td nowrap="nowrap"><b>iterate</b> (filter, options)</td>
     <td>A generator function that returns an iterator over all records in the storage matching the criteria.</td></tr>
 </tbody></table>
 
