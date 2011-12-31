@@ -21,10 +21,11 @@
     ObjectFS storage wrapper for RSS/Atom/etc. feeds.
  */
 
-
+var ioHandler = require("objectfs-core/ioHandler");
 var objects = require("ringo/utils/objects");
 var scheduler = require("ringo/scheduler");
 
+exports.file_name = false;
 exports.feed_uri = false;
 exports.push_blocker = false;
 
@@ -35,9 +36,12 @@ exports.push_blocker = false;
 exports.connect = function(feed_uri) {
 
     this.feed_uri = feed_uri;
+    this.file_name = ioHandler.getFileName(feed_uri);
 
-    if (feed_uri.schema == "rss" || feed_uri.path.match(/.rss$/)) {
+    if (feed_uri.scheme == "rss" || feed_uri.path.match(/.rss$/)) {
         this.content_handler = require("ofs-feeds/rss-handler");
+    } else {
+        throw Error("Unrecognized URI type.");
     }
     
 };
@@ -80,7 +84,7 @@ exports.iterateAll = function() {
     scheduler.setTimeout(
         parser.parseFile.bind(
             parser,
-            this.feed_uri.uri,
+            this.file_name,
             this.content_handler.pathHandlers),
         0);
 
