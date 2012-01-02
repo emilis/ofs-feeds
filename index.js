@@ -26,6 +26,7 @@ var objects = require("ringo/utils/objects");
 var scheduler = require("ringo/scheduler");
 
 exports.file_name = false;
+exports.input_stream = false;
 exports.feed_uri = false;
 exports.push_blocker = false;
 
@@ -36,7 +37,12 @@ exports.push_blocker = false;
 exports.connect = function(feed_uri) {
 
     this.feed_uri = feed_uri;
-    this.file_name = ioHandler.getFileName(feed_uri);
+
+    if (feed_uri.params.ofs_read_only && feed_uri.params.ofs_one_call) {
+        this.input_stream = ioHandler.getInputStream(feed_uri);
+    } else {
+        this.file_name = ioHandler.getFileName(feed_uri);
+    }
 
     if (feed_uri.scheme == "rss" || feed_uri.path.match(/.rss$/)) {
         this.content_handler = require("ofs-feeds/rss-handler");
@@ -81,12 +87,19 @@ exports.iterateAll = function() {
    
     //todo: add parser
     var parser = require("ctlr-xml/sax-path-parser");
-    scheduler.setTimeout(
-        parser.parseFile.bind(
+    if (this.input_stream) {
+        var action = parser.parseInputStream.bind(
+            parser,
+            this.input_stream,
+            this.content_handler.pathHandlers);
+    } else {
+        var action = parser.parseFile.bind(
             parser,
             this.file_name,
-            this.content_handler.pathHandlers),
-        0);
+            this.content_handler.pathHandlers);
+    }
+
+    scheduler.setTimeout(action, 0);
 
     for each (var item in push_blocker.iterate()) {
         yield item;
