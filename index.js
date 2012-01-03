@@ -21,6 +21,7 @@
     ObjectFS storage wrapper for RSS/Atom/etc. feeds.
  */
 
+var filters = require("objectfs-core/mixins/filters");
 var ioHandler = require("objectfs-core/ioHandler");
 var objects = require("ringo/utils/objects");
 var scheduler = require("ringo/scheduler");
@@ -44,36 +45,16 @@ exports.connect = function(feed_uri) {
         this.file_name = ioHandler.getFileName(feed_uri);
     }
 
+    this.iterate = filters.iterate(this.iterateAll.bind(this));
+    this.list = filters.list(this.iterate);
+
     if (feed_uri.scheme == "rss" || feed_uri.path.match(/.rss$/)) {
         this.content_handler = require("ofs-feeds/rss-handler");
+        this.read = filters.read("guid", this.iterate);
     } else {
         throw Error("Unrecognized URI type.");
     }
     
-};
-
-
-/**
- *
- */
-exports.read = function(item_url) {
-
-    for each (var item in this.iterateAll()) {
-        if (item.url == item_url) {
-            return item;
-        }
-    }
-};
-
-
-/**
- *
- */
-exports.iterate = function(filter, options) {
-
-    for each (var item in this.iterateAll()) {
-        yield item;
-    }
 };
 
 
@@ -108,15 +89,4 @@ exports.iterateAll = function() {
 };
 
 
-/**
- *
- */
-exports.list = function(filter, options) {
-
-    var l = [];
-    for each (var record in this.iterate(filter, options)) {
-        l.push(record);
-    }
-    return l;
-};
 
